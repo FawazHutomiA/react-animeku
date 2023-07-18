@@ -1,95 +1,180 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+/** @jsxImportSource @emotion/react */
+"use client";
+import Card from "@/components/card";
+import { css, SerializedStyles } from "@emotion/react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function Home() {
+  const data = [
+    {
+      id: 1,
+      imageSrc: "/example.jpeg",
+      title: "Card Title",
+      year: 2023,
+    },
+    {
+      id: 2,
+      imageSrc: "/example2.webp",
+      title: "Card Title",
+      year: 2023,
+    },
+    {
+      id: 3,
+      imageSrc: "/example3.jpeg",
+      title: "Card Title",
+      year: 2023,
+    },
+    {
+      id: 4,
+      imageSrc: "/example.jpeg",
+      title: "Card Title",
+      year: 2023,
+    },
+    {
+      id: 5,
+      imageSrc: "/example2.webp",
+      title: "Card Title",
+      year: 2023,
+    },
+    {
+      id: 6,
+      imageSrc: "/example.jpeg",
+      title: "Card Title",
+      year: 2023,
+    },
+    {
+      id: 7,
+      imageSrc: "/example3.jpeg",
+      title: "Card Title",
+      year: 2023,
+    },
+    {
+      id: 8,
+      imageSrc: "/example.jpeg",
+      title: "Card Title",
+      year: 2023,
+    },
+    {
+      id: 9,
+      imageSrc: "/example2.webp",
+      title: "Card Title",
+      year: 2023,
+    },
+    {
+      id: 10,
+      imageSrc: "/example.jpeg",
+      title: "Card Title",
+      year: 2023,
+    },
+  ];
+
+  const router = useRouter();
+
+  const [isSelect, setIsSelect] = useState(false);
+
+  const getDataFromChild = (item: any) => {
+    console.log(item.id);
+    // console.log(router);
+    router.push(`/detail/${item.id}`);
+  };
+
+  const handleSelect = () => {
+    setIsSelect(!isSelect);
+    console.log(isSelect);
+  };
+
+  const handleSelected = (item: any) => {
+    console.log("selected", item.id);
+  };
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <main>
+      <div css={headerContent}>
+        <h1 className="title">List of Anime</h1>
+        <div className="button">
+          <button onClick={handleSelect}>Select Anime</button>
+          <button disabled={isSelect == false}>Add to Collection</button>
         </div>
       </div>
+      {!isSelect && (
+        <div css={styles}>
+          {data.map((item, index) => (
+            <Card
+              key={index}
+              imageSrc={item.imageSrc}
+              title={item.title}
+              year={item.year}
+              getData={() => getDataFromChild(item)}
+            />
+          ))}
+        </div>
+      )}
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+      {isSelect && (
+        <div css={styles}>
+          {data.map((item, index) => (
+            <Card
+              key={index}
+              imageSrc={item.imageSrc}
+              title={item.title}
+              year={item.year}
+              getSelect={() => handleSelected(item)}
+            />
+          ))}
+        </div>
+      )}
     </main>
-  )
+  );
 }
+
+const styles: SerializedStyles = css`
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: center;
+  justify-items: center;
+  padding-right: 4rem;
+  padding-left: 4rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  gap: 1rem;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+`;
+
+const headerContent: SerializedStyles = css`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 4rem;
+  padding-left: 4rem;
+  padding-top: 2rem;
+
+  . title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-left: 4rem;
+  }
+
+  .button {
+    display: flex;
+    column-gap: 1rem;
+  }
+
+  button {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    background-color: #f1f1f1;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    font-size: 1rem;
+
+    &:hover {
+      background-color: #e1e1e1;
+    }
+  }
+`;
