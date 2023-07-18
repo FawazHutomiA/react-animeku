@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 "use client";
 import { css, SerializedStyles } from "@emotion/react";
+import Badge from "./badge";
 
 interface CardProps {
   imageSrc: string;
@@ -8,10 +9,19 @@ interface CardProps {
   year?: number;
   getData?: () => void;
   getSelect?: () => void;
-  isSelect?: boolean;
+  selected?: Number[];
+  id: Number;
 }
 
-const Card = ({ imageSrc, title, year, getData, getSelect }: CardProps) => {
+const Card = ({
+  imageSrc,
+  title,
+  year,
+  getData,
+  getSelect,
+  selected,
+  id,
+}: CardProps) => {
   const handleClick = () => {
     if (getData) {
       getData();
@@ -28,6 +38,11 @@ const Card = ({ imageSrc, title, year, getData, getSelect }: CardProps) => {
         <h2 className="cardTitle">{title}</h2>
         <p className="cardYear">{year}</p>
       </div>
+      {selected && selected.includes(id) && (
+        <div className="badge">
+          <Badge />
+        </div>
+      )}
     </div>
   );
 };
@@ -74,6 +89,14 @@ const styles: SerializedStyles = css`
 
   .cardYear {
     font-size: 0.8rem;
+  }
+
+  .badge {
+    position: absolute;
+    // set the badge to the center of the card
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 `;
 

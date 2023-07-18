@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function Home() {
+  const [selected, setSelected] = useState<Number[]>([]);
   const data = [
     {
       id: 1,
@@ -85,7 +86,17 @@ export default function Home() {
   };
 
   const handleSelected = (item: any) => {
-    console.log("selected", item.id);
+    if (selected.includes(item.id)) {
+      setSelected(selected.filter((id) => id !== item.id));
+    } else {
+      setSelected([...selected, item.id]);
+    }
+
+    console.log(selected);
+  };
+
+  const cobaTest = () => {
+    console.log("coba test");
   };
 
   return (
@@ -94,7 +105,13 @@ export default function Home() {
         <h1 className="title">List of Anime</h1>
         <div className="button">
           <button onClick={handleSelect}>Select Anime</button>
-          <button disabled={isSelect == false}>Add to Collection</button>
+          <button
+            disabled={isSelect == false}
+            onClick={cobaTest}
+            css={isSelect == false ? disabledButton : null}
+          >
+            Add to Collection
+          </button>
         </div>
       </div>
       {!isSelect && (
@@ -106,6 +123,7 @@ export default function Home() {
               title={item.title}
               year={item.year}
               getData={() => getDataFromChild(item)}
+              id={item.id}
             />
           ))}
         </div>
@@ -120,6 +138,8 @@ export default function Home() {
               title={item.title}
               year={item.year}
               getSelect={() => handleSelected(item)}
+              selected={selected}
+              id={item.id}
             />
           ))}
         </div>
@@ -177,4 +197,9 @@ const headerContent: SerializedStyles = css`
       background-color: #e1e1e1;
     }
   }
+`;
+
+const disabledButton = css`
+  pointer-events: none;
+  opacity: 0.5;
 `;
