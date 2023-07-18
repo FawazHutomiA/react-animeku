@@ -24,48 +24,6 @@ export default function Collection() {
       title: "Collection 3",
       year: 2023,
     },
-    {
-      id: 4,
-      imageSrc: "/example.jpeg",
-      title: "Collection 4",
-      year: 2023,
-    },
-    {
-      id: 5,
-      imageSrc: "/example2.webp",
-      title: "Collection 5",
-      year: 2023,
-    },
-    {
-      id: 6,
-      imageSrc: "/example.jpeg",
-      title: "Collection 6",
-      year: 2023,
-    },
-    {
-      id: 7,
-      imageSrc: "/example3.jpeg",
-      title: "Collection 7",
-      year: 2023,
-    },
-    {
-      id: 8,
-      imageSrc: "/example.jpeg",
-      title: "Collection 8",
-      year: 2023,
-    },
-    {
-      id: 9,
-      imageSrc: "/example2.webp",
-      title: "Collection 9",
-      year: 2023,
-    },
-    {
-      id: 10,
-      imageSrc: "/example.jpeg",
-      title: "Collection 10",
-      year: 2023,
-    },
   ];
 
   const router = useRouter();
