@@ -43,6 +43,7 @@ export default function Collection() {
             imageSrc={item.imageSrc}
             title={item.title}
             getData={() => getDataFromChild(item)}
+            id={item.id}
           />
         ))}
       </div>
