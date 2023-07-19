@@ -104,7 +104,13 @@ export default function Home() {
       <div css={headerContent}>
         <h1 className="title">List of Anime</h1>
         <div className="button">
-          <button onClick={handleSelect}>Select Anime</button>
+          <button onClick={handleSelect}>
+            {isSelect == false ? (
+              <span>Select Anime</span>
+            ) : (
+              <span>Selected Anime: {[selected.length]}</span>
+            )}
+          </button>
           <button
             disabled={isSelect == false}
             onClick={cobaTest}
