@@ -7,6 +7,7 @@ interface CardProps {
   imageSrc: string;
   title: string;
   year?: number;
+  totalAnime?: number | string;
   getData?: () => void;
   getSelect?: () => void;
   selected?: Number[];
@@ -17,6 +18,7 @@ const Card = ({
   imageSrc,
   title,
   year,
+  totalAnime,
   getData,
   getSelect,
   selected,
@@ -37,6 +39,7 @@ const Card = ({
       <div className="cardContent">
         <h2 className="cardTitle">{title}</h2>
         <p className="cardYear">{year}</p>
+        <p className="cardYear">{totalAnime}</p>
       </div>
       {selected && selected.includes(id) && (
         <div className="badge">

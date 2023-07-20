@@ -125,19 +125,33 @@ export default function Home() {
       anime: selectedData,
     };
 
-    const newCollections = collections.filter(
-      (item: any) => item.id != collectionId.value
-    );
+    // tambahkan data anime ke collection, jangan hapus data anime yang sudah ada di collection, jika ada id anime yang sama, maka id anime yang sama yang sudah ada di collection dihapus lalu di timpa dengan id anime yang baru
 
-    newCollections.push(data);
+    const isSame = collections.find((item: any) => item.id === data.id);
 
-    localStorage.setItem("collections", JSON.stringify(newCollections));
+    if (isSame) {
+      const newData = collections.map((item: any) => {
+        if (item.id === data.id) {
+          return {
+            ...item,
+            anime: [...item.anime, ...data.anime],
+          };
+        } else {
+          return item;
+        }
+      });
+
+      localStorage.setItem("collections", JSON.stringify(newData));
+    } else {
+      collections.push(data);
+      localStorage.setItem("collections", JSON.stringify(collections));
+    }
 
     setIsShow(!isShow);
 
     setSelected([]);
 
-    setIsSelect(!isSelect);
+    setIsSelect(false);
   };
 
   return (

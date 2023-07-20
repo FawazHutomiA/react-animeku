@@ -141,6 +141,7 @@ export default function Collection() {
               getData={() => (isRemove ? null : getDataFromChild(item))}
               getSelect={() => (isRemove ? handleSelected(item) : null)}
               id={item.id}
+              totalAnime={item.anime.length + " Anime"}
             />
           ))}
         </div>

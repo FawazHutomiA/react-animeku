@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
 "use client";
+import Card from "@/components/card";
 import { css, SerializedStyles } from "@emotion/react";
 
 export default function CollectionDetail({
@@ -7,56 +8,52 @@ export default function CollectionDetail({
 }: {
   params: { id: number };
 }) {
+  // data from localstorage collections array of object with id, name, anime
+  const collections = JSON.parse(localStorage.getItem("collections") || "[]");
+
+  const id = Number(params.id);
+
+  const data = collections.find((item: any) => item.id === id);
+
+  const anime = data.anime;
+
   return (
-    <div css={styles}>
-      <img src="/baner.jpeg" alt="" className="banner" />
-      <div className="content">
-        <img src="/example.jpeg" alt="" className="imageContent" />
-        <div className="description">
-          <h1>Wibu Bau Bawang Collection</h1>
-          <p>Description</p>
-        </div>
+    <>
+      <h1 css={titleStyle}>{data.name}</h1>
+      <div css={styles}>
+        {anime.map((item: any, index: number) => (
+          <Card
+            key={index}
+            imageSrc={item.imageSrc}
+            title={item.title}
+            year={item.year}
+            id={item.id}
+          />
+        ))}
       </div>
-    </div>
+    </>
   );
 }
 
 const styles: SerializedStyles = css`
-  width: 100%;
-  height: 100vh;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: center;
+  justify-items: center;
+  padding-right: 4rem;
+  padding-left: 4rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  gap: 1rem;
 
-  .banner {
-    width: 100%;
-    height: 26rem;
-    object-fit: cover;
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
   }
+`;
 
-  .content {
-    background-color: white;
-    padding: 1rem;
-    height: fit-content;
-    width: auto;
-    margin-left: 3rem;
-    margin-right: 3rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    position: relative;
-    top: -8rem;
-  }
-
-  .imageContent {
-    width: 80%;
-    aspect-ratio: 9/16;
-    object-fit: fill;
-    border-radius: 0.5rem;
-    height: 30rem;
-  }
-
-  .description {
-    margin-left: -4rem;
-    width: auto;
-    grid-column: span 2 / span 2;
-  }
+const titleStyle: SerializedStyles = css`
+  font-size: 2rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-left: 4rem;
 `;
