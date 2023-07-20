@@ -1,88 +1,93 @@
 /** @jsxImportSource @emotion/react */
 "use client";
 import Card from "@/components/card";
+import Modal from "@/components/modal";
 import { css, SerializedStyles } from "@emotion/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function Home() {
   const [selected, setSelected] = useState<Number[]>([]);
-  const data = [
+
+  const [data, setData] = useState([
     {
       id: 1,
       imageSrc: "/example.jpeg",
-      title: "Card Title",
+      title: "Card Title 1",
       year: 2023,
     },
     {
       id: 2,
       imageSrc: "/example2.webp",
-      title: "Card Title",
+      title: "Card Title 2",
       year: 2023,
     },
     {
       id: 3,
       imageSrc: "/example3.jpeg",
-      title: "Card Title",
+      title: "Card Title 3",
       year: 2023,
     },
     {
       id: 4,
       imageSrc: "/example.jpeg",
-      title: "Card Title",
+      title: "Card Title 4",
       year: 2023,
     },
     {
       id: 5,
       imageSrc: "/example2.webp",
-      title: "Card Title",
+      title: "Card Title 5",
       year: 2023,
     },
     {
       id: 6,
       imageSrc: "/example.jpeg",
-      title: "Card Title",
+      title: "Card Title 6",
       year: 2023,
     },
     {
       id: 7,
       imageSrc: "/example3.jpeg",
-      title: "Card Title",
+      title: "Card Title 7",
       year: 2023,
     },
     {
       id: 8,
       imageSrc: "/example.jpeg",
-      title: "Card Title",
+      title: "Card Title 8",
       year: 2023,
     },
     {
       id: 9,
       imageSrc: "/example2.webp",
-      title: "Card Title",
+      title: "Card Title 9",
       year: 2023,
     },
     {
       id: 10,
       imageSrc: "/example.jpeg",
-      title: "Card Title",
+      title: "Card Title 10",
       year: 2023,
     },
-  ];
+  ]);
+
+  const collections = JSON.parse(localStorage.getItem("collections") || "[]");
+
+  console.log(typeof collections, collections);
 
   const router = useRouter();
 
   const [isSelect, setIsSelect] = useState(false);
 
+  const [isShow, setIsShow] = useState(false);
+
   const getDataFromChild = (item: any) => {
-    console.log(item.id);
-    // console.log(router);
     router.push(`/detail/${item.id}`);
   };
 
   const handleSelect = () => {
     setIsSelect(!isSelect);
-    console.log(isSelect);
   };
 
   const handleSelected = (item: any) => {
@@ -91,12 +96,47 @@ export default function Home() {
     } else {
       setSelected([...selected, item.id]);
     }
-
-    console.log(selected);
   };
 
-  const cobaTest = () => {
-    console.log("coba test");
+  const addToCollection = () => {
+    setIsShow(!isShow);
+  };
+
+  const handleClose = () => {
+    setIsShow(!isShow);
+  };
+
+  const handleSave = () => {
+    // save data anime to collection in localstorage
+    const collections = JSON.parse(localStorage.getItem("collections") || "[]");
+
+    const collectionId = document.getElementById(
+      "collection"
+    ) as HTMLSelectElement;
+
+    const selectedCollection = collections.find(
+      (item: any) => item.id == collectionId.value
+    );
+
+    const data = {
+      id: selectedCollection.id,
+      name: selectedCollection.name,
+      anime: selected,
+    };
+
+    const newCollections = collections.filter(
+      (item: any) => item.id != collectionId.value
+    );
+
+    newCollections.push(data);
+
+    localStorage.setItem("collections", JSON.stringify(newCollections));
+
+    setIsShow(!isShow);
+
+    setSelected([]);
+
+    setIsSelect(!isSelect);
   };
 
   return (
@@ -104,7 +144,7 @@ export default function Home() {
       <div css={headerContent}>
         <h1 className="title">List of Anime</h1>
         <div className="button">
-          <button onClick={handleSelect}>
+          <button onClick={handleSelect} disabled={isShow}>
             {isSelect == false ? (
               <span>Select Anime</span>
             ) : (
@@ -112,9 +152,11 @@ export default function Home() {
             )}
           </button>
           <button
-            disabled={isSelect == false}
-            onClick={cobaTest}
-            css={isSelect == false ? disabledButton : null}
+            disabled={isSelect == false || isShow}
+            onClick={addToCollection}
+            css={
+              isSelect == true && selected.length > 0 ? null : disabledButton
+            }
           >
             Add to Collection
           </button>
@@ -149,6 +191,30 @@ export default function Home() {
             />
           ))}
         </div>
+      )}
+
+      {isShow && (
+        <Modal closeModal={handleClose}>
+          <div css={modal}>
+            <select name="collection" id="collection">
+              {collections.map((item: any) => (
+                <option value={item.id} key={item.id}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
+            <ul>
+              {data
+                .filter((item) => selected.includes(item.id))
+                .map((item, index) => (
+                  <li key={item.id}>
+                    {index + 1}. {item.title}
+                  </li>
+                ))}
+            </ul>
+            {selected.length > 0 && <button onClick={handleSave}>Save</button>}
+          </div>
+        </Modal>
       )}
     </main>
   );
@@ -208,4 +274,45 @@ const headerContent: SerializedStyles = css`
 const disabledButton = css`
   pointer-events: none;
   opacity: 0.5;
+`;
+
+const modal: SerializedStyles = css`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  select {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    background-color: #f1f1f1;
+    cursor: pointer;
+    width: 30rem;
+    font-size: 1rem;
+  }
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    list-style-type: none;
+  }
+
+  li {
+    border-radius: 0.5rem;
+    border: none;
+    width: 30rem;
+    font-size: 1rem;
+  }
+
+  button {
+    // set button to the right side of the modal content (flex-end)
+    margin-left: auto;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    background-color: #f1f1f1;
+    cursor: pointer;
+    width: 10rem;
+  }
 `;
