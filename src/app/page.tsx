@@ -72,6 +72,8 @@ export default function Home() {
     },
   ]);
 
+  const selectedData = data.filter((item) => selected.includes(item.id));
+
   const collections = JSON.parse(localStorage.getItem("collections") || "[]");
 
   console.log(typeof collections, collections);
@@ -107,7 +109,6 @@ export default function Home() {
   };
 
   const handleSave = () => {
-    // save data anime to collection in localstorage
     const collections = JSON.parse(localStorage.getItem("collections") || "[]");
 
     const collectionId = document.getElementById(
@@ -121,7 +122,7 @@ export default function Home() {
     const data = {
       id: selectedCollection.id,
       name: selectedCollection.name,
-      anime: selected,
+      anime: selectedData,
     };
 
     const newCollections = collections.filter(
@@ -204,13 +205,11 @@ export default function Home() {
               ))}
             </select>
             <ul>
-              {data
-                .filter((item) => selected.includes(item.id))
-                .map((item, index) => (
-                  <li key={item.id}>
-                    {index + 1}. {item.title}
-                  </li>
-                ))}
+              {selectedData.map((item, index) => (
+                <li key={item.id}>
+                  {index + 1}. {item.title}
+                </li>
+              ))}
             </ul>
             {selected.length > 0 && <button onClick={handleSave}>Save</button>}
           </div>
