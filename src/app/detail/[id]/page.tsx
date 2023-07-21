@@ -132,8 +132,7 @@ const styles: SerializedStyles = css`
     box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    position: relative;
-    top: -8rem;
+    margin-top: 4rem;
   }
 
   .imageContent {
@@ -157,10 +156,13 @@ const styles: SerializedStyles = css`
   }
 
   @media (max-width: 1024px) {
+    height: 120rem;
+
     .content {
       grid-template-columns: repeat(1, minmax(0, 1fr));
       margin-left: 0;
       margin-right: 0;
+      margin-top: 2rem;
     }
 
     .imageContent {
