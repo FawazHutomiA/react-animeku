@@ -33,11 +33,18 @@ const Card = ({
     }
   };
 
+  const limitTitle = (title: string) => {
+    if (title.length > 20) {
+      return title.slice(0, 20) + "...";
+    }
+    return title;
+  };
+
   return (
     <div css={styles} className="card" onClick={handleClick}>
       <img src={imageSrc} alt="Card Cover" className="cardImage" />
       <div className="cardContent">
-        <h2 className="cardTitle">{title}</h2>
+        <h2 className="cardTitle">{limitTitle(title)}</h2>
         <p className="cardYear">{year}</p>
         <p className="cardYear">{totalAnime}</p>
       </div>

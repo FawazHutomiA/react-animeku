@@ -2,6 +2,7 @@
 "use client";
 import Card from "@/components/card";
 import { css, SerializedStyles } from "@emotion/react";
+import { useRouter } from "next/navigation";
 
 export default function CollectionDetail({
   params,
@@ -10,12 +11,14 @@ export default function CollectionDetail({
 }) {
   // data from localstorage collections array of object with id, name, anime
   const collections = JSON.parse(localStorage.getItem("collections") || "[]");
-
   const id = Number(params.id);
-
   const data = collections.find((item: any) => item.id === id);
-
   const anime = data.anime;
+  const router = useRouter();
+
+  const getDataFromChild = (item: any) => {
+    router.push(`/detail/${item.id}`);
+  };
 
   return (
     <>
@@ -28,6 +31,7 @@ export default function CollectionDetail({
             title={item.title}
             year={item.year}
             id={item.id}
+            getData={() => getDataFromChild(item)}
           />
         ))}
       </div>

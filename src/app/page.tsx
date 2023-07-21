@@ -4,85 +4,24 @@ import Card from "@/components/card";
 import Modal from "@/components/modal";
 import { css, SerializedStyles } from "@emotion/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import Pagination from "@/components/pagination";
 
 export default function Home() {
   const [selected, setSelected] = useState<Number[]>([]);
-
-  const [data, setData] = useState([
-    {
-      id: 1,
-      imageSrc: "/example.jpeg",
-      title: "Card Title 1",
-      year: 2023,
-    },
-    {
-      id: 2,
-      imageSrc: "/example2.webp",
-      title: "Card Title 2",
-      year: 2023,
-    },
-    {
-      id: 3,
-      imageSrc: "/example3.jpeg",
-      title: "Card Title 3",
-      year: 2023,
-    },
-    {
-      id: 4,
-      imageSrc: "/example.jpeg",
-      title: "Card Title 4",
-      year: 2023,
-    },
-    {
-      id: 5,
-      imageSrc: "/example2.webp",
-      title: "Card Title 5",
-      year: 2023,
-    },
-    {
-      id: 6,
-      imageSrc: "/example.jpeg",
-      title: "Card Title 6",
-      year: 2023,
-    },
-    {
-      id: 7,
-      imageSrc: "/example3.jpeg",
-      title: "Card Title 7",
-      year: 2023,
-    },
-    {
-      id: 8,
-      imageSrc: "/example.jpeg",
-      title: "Card Title 8",
-      year: 2023,
-    },
-    {
-      id: 9,
-      imageSrc: "/example2.webp",
-      title: "Card Title 9",
-      year: 2023,
-    },
-    {
-      id: 10,
-      imageSrc: "/example.jpeg",
-      title: "Card Title 10",
-      year: 2023,
-    },
-  ]);
-
+  const [data, setData] = useState<any[]>([]);
   const selectedData = data.filter((item) => selected.includes(item.id));
-
   const collections = JSON.parse(localStorage.getItem("collections") || "[]");
-
-  console.log(typeof collections, collections);
-
   const router = useRouter();
-
   const [isSelect, setIsSelect] = useState(false);
-
   const [isShow, setIsShow] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isCollection, setIsCollection] = useState(false);
+  const [name, setName] = useState("");
+  const [error, setError] = useState(false);
 
   const getDataFromChild = (item: any) => {
     router.push(`/detail/${item.id}`);
@@ -102,6 +41,35 @@ export default function Home() {
 
   const addToCollection = () => {
     setIsShow(!isShow);
+  };
+
+  const createCollection = () => {
+    setIsCollection(!isCollection);
+  };
+
+  const addCollection = () => {
+    const id = Math.floor(Math.random() * 1000);
+
+    const data = {
+      id: id,
+      name: name,
+      anime: [],
+    };
+
+    const collections = JSON.parse(localStorage.getItem("collections") || "[]");
+
+    const isSame = collections.find((item: any) => item.name === name);
+
+    if (isSame) {
+      setError(true);
+      return;
+    } else {
+      collections.push(data);
+      localStorage.setItem("collections", JSON.stringify(collections));
+      setIsCollection(!isCollection);
+      setName("");
+      setError(false);
+    }
   };
 
   const handleClose = () => {
@@ -154,8 +122,69 @@ export default function Home() {
     setIsSelect(false);
   };
 
+  const fetchData = async (page: number) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.post("https://graphql.anilist.co", {
+        query: `
+        query ($page: Int, $perPage: Int) {
+          Page(page: $page, perPage: $perPage) {
+            pageInfo {
+              total
+              currentPage
+              lastPage
+              hasNextPage
+              perPage
+            }
+            media(type: ANIME) {
+              id
+              title {
+                romaji
+                english
+                native
+              }
+              coverImage {
+                large
+              }
+              startDate {
+                year
+                month
+                day
+              }
+            }
+          }
+        }
+      `,
+        variables: {
+          page: page,
+          perPage: 10,
+        },
+      });
+
+      const animeData = response.data.data.Page.media.map((item: any) => ({
+        id: item.id,
+        imageSrc: item.coverImage.large,
+        title: item.title.romaji,
+        year: item.startDate.year,
+      }));
+
+      setData(animeData);
+      setCurrentPage(response.data.data.Page.pageInfo.currentPage);
+      setTotalPages(response.data.data.Page.pageInfo.lastPage);
+
+      console.log(animeData, "data");
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(currentPage);
+  }, [currentPage]);
+
   return (
-    <main>
+    <main css={parent}>
       <div css={headerContent}>
         <h1 className="title">List of Anime</h1>
         <div className="button">
@@ -211,33 +240,81 @@ export default function Home() {
       {isShow && (
         <Modal closeModal={handleClose}>
           <div css={modal}>
-            <select name="collection" id="collection">
-              {collections.map((item: any) => (
-                <option value={item.id} key={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
-            <ul>
-              {selectedData.map((item, index) => (
-                <li key={item.id}>
-                  {index + 1}. {item.title}
-                </li>
-              ))}
-            </ul>
-            {selected.length > 0 && <button onClick={handleSave}>Save</button>}
+            {!isCollection && (
+              <select name="collection" id="collection">
+                {collections.map((item: any) => (
+                  <option value={item.id} key={item.id}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+            )}
+            {isCollection == true && (
+              <div css={collectionStyle}>
+                <h1 className="titleModal">Create a new collection</h1>
+                <input
+                  type="text"
+                  placeholder="Collection Name"
+                  value={name}
+                  onChange={(e) =>
+                    setName(e.target.value.replace(/[^\w\s]/gi, ""))
+                  }
+                />
+                {error && <span>Collection name is already exist</span>}
+                <button className="buttonSave" onClick={addCollection}>
+                  Add
+                </button>
+              </div>
+            )}
+            {isCollection == false && (
+              <p onClick={createCollection} className="newCollection">
+                Add new Collection?
+              </p>
+            )}
+            {!isCollection && (
+              <div css={footerModal}>
+                <ul>
+                  {selectedData.map((item, index) => (
+                    <li key={item.id}>
+                      {index + 1}. {item.title}
+                    </li>
+                  ))}
+                </ul>
+                {selected.length > 0 && (
+                  <button onClick={handleSave}>Save</button>
+                )}
+              </div>
+            )}
           </div>
         </Modal>
       )}
+
+      {data.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          setCurrentPage={setCurrentPage}
+          isLoading={isLoading}
+        />
+      )}
+
+      {data.length === 0 && isLoading && <div css={loadingSpinner}></div>}
     </main>
   );
 }
 
+const parent: SerializedStyles = css`
+  height: 80rem;
+
+  @media (max-width: 1024px) {
+    height: fit-content;
+  }
+`;
+
 const styles: SerializedStyles = css`
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  align-items: center;
-  justify-items: center;
+
   padding-right: 4rem;
   padding-left: 4rem;
   padding-top: 2rem;
@@ -282,6 +359,17 @@ const headerContent: SerializedStyles = css`
       background-color: #e1e1e1;
     }
   }
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+
+    .button {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      row-gap: 1rem;
+    }
+  }
 `;
 
 const disabledButton = css`
@@ -319,7 +407,6 @@ const modal: SerializedStyles = css`
   }
 
   button {
-    // set button to the right side of the modal content (flex-end)
     margin-left: auto;
     padding: 1rem;
     border-radius: 0.5rem;
@@ -328,4 +415,126 @@ const modal: SerializedStyles = css`
     cursor: pointer;
     width: 10rem;
   }
+
+  .newCollection {
+    color: red;
+    cursor: pointer;
+    margin-bottom: 2rem;
+    align-self: flex-end;
+  }
+
+  @media (max-width: 1024px) {
+    select {
+      width: 16rem;
+    }
+
+    ul {
+      li {
+        width: 16rem;
+      }
+    }
+
+    button {
+      width: 8rem;
+      margin-top: 1rem;
+    }
+
+    .newCollection {
+      margin-bottom: 1rem;
+    }
+
+    .titleModal {
+      font-size: 1.2rem;
+    }
+
+    input {
+      width: 16rem;
+    }
+
+    span {
+      font-size: 0.8rem;
+    }
+
+    .buttonSave {
+      width: 8rem;
+    }
+  }
+`;
+
+const loadingSpinner: SerializedStyles = css`
+  border: 4px solid rgba(0, 0, 0, 0.3);
+  border-top: 4px solid #000;
+  border-radius: 50%;
+  width: 12rem;
+  height: 12rem;
+  animation: spin 1s linear infinite;
+  margin: 2rem auto;
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
+const collectionStyle: SerializedStyles = css`
+  display: flex;
+  flex-direction: column;
+
+  .titleModal {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .buttonSave {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    background-color: #f1f1f1;
+    cursor: pointer;
+    width: 10rem;
+    margin-top: 1rem;
+  }
+
+  input {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    background-color: #f1f1f1;
+    width: 30rem;
+    font-size: 1rem;
+  }
+
+  span {
+    color: red;
+    font-size: 1rem;
+    margin-top: 1rem;
+  }
+
+  @media (max-width: 1024px) {
+    input {
+      width: 16rem;
+    }
+
+    .buttonSave {
+      width: 8rem;
+    }
+
+    .titleModal {
+      font-size: 1.2rem;
+    }
+
+    span {
+      font-size: 0.8rem;
+    }
+  }
+`;
+
+const footerModal: SerializedStyles = css`
+  display: flex;
+  flex-direction: column;
 `;

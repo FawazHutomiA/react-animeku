@@ -234,6 +234,26 @@ const headerContent: SerializedStyles = css`
       background-color: #e1e1e1;
     }
   }
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+
+    .title {
+      margin-left: 0;
+    }
+
+    .buttonHeader {
+      margin-top: 1rem;
+    }
+
+    .buttonCreate {
+      font-size: 1rem;
+    }
+
+    .buttonRemove {
+      font-size: 1rem;
+    }
+  }
 `;
 
 const modal: SerializedStyles = css`
@@ -270,6 +290,24 @@ const modal: SerializedStyles = css`
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     color: red;
+  }
+
+  @media (max-width: 1024px) {
+    input {
+      width: 16rem;
+    }
+
+    .buttonSave {
+      font-size: 1rem;
+    }
+
+    span {
+      font-size: 0.8rem;
+    }
+
+    .titleModal {
+      font-size: 1.2rem;
+    }
   }
 `;
 
