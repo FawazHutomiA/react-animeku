@@ -3,27 +3,35 @@
 import Card from "@/components/card";
 import { css, SerializedStyles } from "@emotion/react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function CollectionDetail({
   params,
 }: {
   params: { id: number };
 }) {
-  const collections = JSON.parse(localStorage.getItem("collections") || "[]");
+  const [collections, setCollections] = useState<any[]>([]);
   const id = Number(params.id);
   const data = collections.find((item: any) => item.id === id);
-  const anime = data.anime;
+  const anime = data?.anime;
   const router = useRouter();
 
   const getDataFromChild = (item: any) => {
     router.push(`/detail/${item.id}`);
   };
 
+  useEffect(() => {
+    const collectionsData = JSON.parse(
+      localStorage.getItem("collections") || "[]"
+    );
+    setCollections(collectionsData);
+  }, []);
+
   return (
     <>
-      <h1 css={titleStyle}>{data.name}</h1>
+      <h1 css={titleStyle}>{data?.name}</h1>
       <div css={styles}>
-        {anime.map((item: any, index: number) => (
+        {anime?.map((item: any, index: number) => (
           <Card
             key={index}
             imageSrc={item.imageSrc}
