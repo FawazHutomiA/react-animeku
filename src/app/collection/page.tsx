@@ -65,7 +65,7 @@ export default function Collection() {
 
   const handleSelected = (item: any) => {
     Swal.fire({
-      title: "Do you want to delete the collection?",
+      title: `Do you want to delete ${item.name}?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Delete",
