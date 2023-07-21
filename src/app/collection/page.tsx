@@ -12,7 +12,7 @@ export default function Collection() {
   const [error, setError] = useState(false);
   const [isRemove, setIsRemove] = useState(false);
   const [selected, setSelected] = useState<Number[]>([]);
-  const [collections, setCollections] = useState<any[]>([]); // Initialize collections state
+  const [collections, setCollections] = useState<any[]>([]);
   const router = useRouter();
 
   const getDataFromChild = (item: any) => {
@@ -74,14 +74,11 @@ export default function Collection() {
     setSelected([...selected]);
 
     if (selected.length > 0 && isRemove == true && collections.length > 0) {
-      const collections = JSON.parse(
-        localStorage.getItem("collections") || "[]"
-      );
-
       const newCollections = collections.filter(
         (item: any) => !selected.includes(item.id)
       );
 
+      setCollections(newCollections);
       localStorage.setItem("collections", JSON.stringify(newCollections));
 
       setSelected([]);
