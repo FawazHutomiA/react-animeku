@@ -12,7 +12,6 @@ export default function Home() {
   const [selected, setSelected] = useState<Number[]>([]);
   const [data, setData] = useState<any[]>([]);
   const selectedData = data.filter((item) => selected.includes(item.id));
-  const collections = JSON.parse(localStorage.getItem("collections") || "[]");
   const router = useRouter();
   const [isSelect, setIsSelect] = useState(false);
   const [isShow, setIsShow] = useState(false);
@@ -20,6 +19,7 @@ export default function Home() {
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isCollection, setIsCollection] = useState(false);
+  const [collections, setCollections] = useState<any[]>([]); // Initialize collections state
   const [name, setName] = useState("");
   const [error, setError] = useState(false);
 
@@ -47,6 +47,13 @@ export default function Home() {
     setIsCollection(!isCollection);
   };
 
+  useEffect(() => {
+    const collectionsData = JSON.parse(
+      localStorage.getItem("collections") || "[]"
+    );
+    setCollections(collectionsData);
+  }, []);
+
   const addCollection = () => {
     const id = Math.floor(Math.random() * 1000);
 
@@ -55,8 +62,6 @@ export default function Home() {
       name: name,
       anime: [],
     };
-
-    const collections = JSON.parse(localStorage.getItem("collections") || "[]");
 
     const isSame = collections.find((item: any) => item.name === name);
 

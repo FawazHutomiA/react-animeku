@@ -4,15 +4,15 @@ import Card from "@/components/card";
 import Modal from "@/components/modal";
 import { css, SerializedStyles } from "@emotion/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Collection() {
-  const collections = JSON.parse(localStorage.getItem("collections") || "[]");
   const [isShow, setIsShow] = useState(false);
   const [name, setName] = useState("");
   const [error, setError] = useState(false);
   const [isRemove, setIsRemove] = useState(false);
   const [selected, setSelected] = useState<Number[]>([]);
+  const [collections, setCollections] = useState<any[]>([]); // Initialize collections state
   const router = useRouter();
 
   const getDataFromChild = (item: any) => {
@@ -28,6 +28,13 @@ export default function Collection() {
     setName("");
   };
 
+  useEffect(() => {
+    const collectionsData = JSON.parse(
+      localStorage.getItem("collections") || "[]"
+    );
+    setCollections(collectionsData);
+  }, []);
+
   const handleSave = () => {
     const id = Math.floor(Math.random() * 1000);
 
@@ -36,8 +43,6 @@ export default function Collection() {
       name: name,
       anime: [],
     };
-
-    const collections = JSON.parse(localStorage.getItem("collections") || "[]");
 
     const isSame = collections.find((item: any) => item.name === name);
 
