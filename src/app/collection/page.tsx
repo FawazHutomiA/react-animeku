@@ -5,6 +5,7 @@ import Modal from "@/components/modal";
 import { css, SerializedStyles } from "@emotion/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 
 export default function Collection() {
   const [isShow, setIsShow] = useState(false);
@@ -63,28 +64,39 @@ export default function Collection() {
   };
 
   const handleSelected = (item: any) => {
-    const index = selected.indexOf(item.id);
+    Swal.fire({
+      title: "Do you want to delete the collection?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Delete",
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        const index = selected.indexOf(item.id);
 
-    if (index > -1) {
-      selected.splice(index, 1);
-    } else {
-      selected.push(item.id);
-    }
+        if (index > -1) {
+          selected.splice(index, 1);
+        } else {
+          selected.push(item.id);
+        }
 
-    setSelected([...selected]);
+        setSelected([...selected]);
 
-    if (selected.length > 0 && isRemove == true && collections.length > 0) {
-      const newCollections = collections.filter(
-        (item: any) => !selected.includes(item.id)
-      );
+        if (selected.length > 0 && isRemove == true && collections.length > 0) {
+          const newCollections = collections.filter(
+            (item: any) => !selected.includes(item.id)
+          );
 
-      setCollections(newCollections);
-      localStorage.setItem("collections", JSON.stringify(newCollections));
+          setCollections(newCollections);
+          localStorage.setItem("collections", JSON.stringify(newCollections));
 
-      setSelected([]);
-    } else {
-      return;
-    }
+          setSelected([]);
+        } else {
+          return;
+        }
+        Swal.fire("Deleted!", "", "success");
+      }
+    });
   };
 
   return (
