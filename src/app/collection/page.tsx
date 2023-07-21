@@ -7,26 +7,15 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function Collection() {
-  // data from localstorage collections array of object with id, name, anime
   const collections = JSON.parse(localStorage.getItem("collections") || "[]");
-
-  console.log(typeof collections, collections);
-
   const [isShow, setIsShow] = useState(false);
-
   const [name, setName] = useState("");
-
   const [error, setError] = useState(false);
-
   const [isRemove, setIsRemove] = useState(false);
-
   const [selected, setSelected] = useState<Number[]>([]);
-
   const router = useRouter();
 
   const getDataFromChild = (item: any) => {
-    console.log(item);
-    // console.log(router);
     router.push(`/collection/${item.id}`);
   };
 

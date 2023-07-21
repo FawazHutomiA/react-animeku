@@ -64,8 +64,6 @@ export default function Detail({ params }: { params: { id: number } }) {
     fetchData(params.id);
   }, []);
 
-  console.log(data.length, "data");
-
   return (
     <div css={styles}>
       {isLoading && Object.keys(data).length == 0 && (

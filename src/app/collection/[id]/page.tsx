@@ -9,7 +9,6 @@ export default function CollectionDetail({
 }: {
   params: { id: number };
 }) {
-  // data from localstorage collections array of object with id, name, anime
   const collections = JSON.parse(localStorage.getItem("collections") || "[]");
   const id = Number(params.id);
   const data = collections.find((item: any) => item.id === id);

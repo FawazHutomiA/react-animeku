@@ -103,7 +103,6 @@ const styles: SerializedStyles = css`
 
   .badge {
     position: absolute;
-    // set the badge to the center of the card
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);

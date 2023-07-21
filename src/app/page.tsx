@@ -93,8 +93,6 @@ export default function Home() {
       anime: selectedData,
     };
 
-    // tambahkan data anime ke collection, jangan hapus data anime yang sudah ada di collection, jika ada id anime yang sama, maka id anime yang sama yang sudah ada di collection dihapus lalu di timpa dengan id anime yang baru
-
     const isSame = collections.find((item: any) => item.id === data.id);
 
     if (isSame) {
@@ -172,7 +170,6 @@ export default function Home() {
       setCurrentPage(response.data.data.Page.pageInfo.currentPage);
       setTotalPages(response.data.data.Page.pageInfo.lastPage);
 
-      console.log(animeData, "data");
       setIsLoading(false);
     } catch (error) {
       console.log(error);
