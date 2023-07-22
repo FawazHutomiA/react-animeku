@@ -156,7 +156,7 @@ const styles: SerializedStyles = css`
   }
 
   @media (max-width: 1024px) {
-    height: 120rem;
+    height: 150rem;
 
     .content {
       grid-template-columns: repeat(1, minmax(0, 1fr));
@@ -183,6 +183,18 @@ const styles: SerializedStyles = css`
     .banner {
       height: 20rem;
     }
+  }
+
+  @media (max-width: 768px) {
+    height: 140rem;
+  }
+
+  @media (max-width: 425px) {
+    height: 120rem;
+  }
+
+  @media (max-width: 375px) {
+    height: 110rem;
   }
 `;
 
