@@ -190,11 +190,11 @@ const styles: SerializedStyles = css`
   }
 
   @media (max-width: 425px) {
-    height: 120rem;
+    height: 135rem;
   }
 
   @media (max-width: 375px) {
-    height: 110rem;
+    height: 125rem;
   }
 `;
 
